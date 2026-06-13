@@ -11,10 +11,6 @@ __pycache__/
 # VS Code
 .vscode/
 
-# Models
-models/*.pkl
-
-# Data
 data/raw/*.csv
 
 # OS files
