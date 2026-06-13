@@ -3,8 +3,15 @@ from pathlib import Path
 import joblib
 import pandas as pd
 from fastapi import FastAPI
+from pydantic import BaseModel
 
 app = FastAPI()
+
+class LoanApplication(BaseModel):
+    AMT_INCOME_TOTAL: float
+    AMT_CREDIT: float
+    AMT_ANNUITY: float
+    AMT_GOODS_PRICE: float
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
@@ -26,11 +33,18 @@ def home():
     }
 
 
-@app.get("/predict")
-def predict():
+@app.post("/predict")
+def predict(data: LoanApplication):
+
+    input_df = sample.copy()
+
+    input_df["AMT_INCOME_TOTAL"] = data.AMT_INCOME_TOTAL
+    input_df["AMT_CREDIT"] = data.AMT_CREDIT
+    input_df["AMT_ANNUITY"] = data.AMT_ANNUITY
+    input_df["AMT_GOODS_PRICE"] = data.AMT_GOODS_PRICE
 
     probability = float(
-        model.predict_proba(sample)[0][1]
+        model.predict_proba(input_df)[0][1]
     )
 
     return {
